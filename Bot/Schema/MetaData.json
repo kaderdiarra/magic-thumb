@@ -1,0 +1,52 @@
+{
+  "collMod": "metadatas",
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "required": [
+        "videoUrl",
+        "videoDuration",
+        "shortcode",
+        "owner",
+        "filePath",
+        "videoPath"
+      ],
+      "properties": {
+        "videoUrl": {
+          "bsonType": "string",
+          "description": "must be a string and is required"
+        },
+        "videoDuration": {
+          "bsonType": "double",
+          "description": "must be an number and is required"
+        },
+        "shortcode": {
+          "bsonType": "string",
+          "description": "must be a string and is required"
+        },
+        "filePath": {
+          "bsonType": "string",
+          "description": "must be a string and is required"
+        },
+        "videoPath": {
+          "bsonType": "string",
+          "description": "must be a string and is required"
+        },
+        "owner": {
+          "bsonType": "object",
+          "required": ["username", "profilePicUrl"],
+          "properties": {
+            "username": {
+              "bsonType": "string",
+              "description": "must be a string and is required"
+            },
+            "profilePicUrl": {
+              "bsonType": "string",
+              "description": "must be a string and is required"
+            }
+          }
+        }
+      }
+    }
+  }
+}
