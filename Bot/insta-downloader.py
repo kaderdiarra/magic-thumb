@@ -1,3 +1,4 @@
+from turtle import pos
 import instaloader
 from Database import Database
 from Parser import Parser
@@ -22,31 +23,41 @@ class Bot:
         self.parser = Parser()
         self.db = Database().getDatabase()
 
+    def getExistingMetaDataIds(self) -> list :
+        data = list(self.db.metadatas.find({}, {"mediaId": 1, "_id": 0}))
+        mediaIds = []
+        for item in data:
+            mediaIds.append(item["mediaId"])
+        return mediaIds
+        
+
     def store(self, element):
-        self.db.metadatas.insert_many(element)
+        if element:
+            self.db.metadatas.insert_many(element)
 
     def downloadPost(self):
         profile = instaloader.Profile.from_username(self.loader.context, USER_NAME)
         collection = profile.get_saved_posts()
+        mediaIds = self.getExistingMetaDataIds()
+        print(mediaIds)
         for post in collection:
-            # compare (post media id) to (saved post media id)
-            if post.is_video:
-                # saved media_id to array
+            if (post.mediaid not in mediaIds) and post.is_video:
                 res = self.loader.download_post(post, target=DIR_NAME_PATTERN)
+                print('media id: ', post.mediaid)
                 print(f'post: {post} downloaded: {res}')
+            return
 
     def run(self):
         self.loader.login(USER, PASSWORD)
         self.downloadPost()
         metaData = self.parser.run()
         self.store(metaData)
-        # push meta data in db
-        # remove meta data .json from local
 
 def main():
-    # Bot().runParser()
     Bot().run()
-    # Database().getDatabase()
+    # print(Bot().getExistingMetaDataIds())
+    # Database().getDatabase().metadatas.drop()
+    # Bot().parser.run()
 
 if __name__ == "__main__":
     main()

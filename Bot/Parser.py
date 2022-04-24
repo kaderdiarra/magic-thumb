@@ -1,4 +1,5 @@
 import json
+import numbers
 from os import getcwd, remove
 from glob import glob
 from utils import getFieldFromDict, loadData
@@ -6,8 +7,9 @@ from utils import getFieldFromDict, loadData
 COLLECTION_LOCATION = getcwd() + "/collection/"
 META_DATA_FIELD = [
     # (path, name)
+    ('node.id', 'mediaId', int),
     ('node.video_url', 'videoUrl'),
-    ('node.video_duration', 'videoDuration'),
+    ('node.video_duration', 'videoDuration', float),
     ('node.shortcode', 'shortcode'),
     ('node.owner.username', 'owner.username'),
     ('node.owner.profile_pic_url', 'owner.profilePicUrl'),

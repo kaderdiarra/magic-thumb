@@ -37,7 +37,16 @@ def createField(element: dict, keyPath: str, value):
 
     return element
 
-def getValueFromDict(element: dict, keyPath: str):
+def cast(value, dataType):
+    try:
+        if dataType:
+            dataType = dataType[0]
+            value = dataType(value)
+    except Exception:
+        pass
+    return value
+
+def getValueFromDict(element: dict, keyPath: str, dataType):
     keys = keyPath.split('.')
     verifyKeys(keys)    
     _element = dict(element)
@@ -45,15 +54,15 @@ def getValueFromDict(element: dict, keyPath: str):
         for key in keys:
             _element = _element[key]
     except:
-        _element = None
-    return _element
+        return None
+    return cast(_element, dataType)
 
 def getFieldFromDict(data: dict, fields: list):
     newData = dict()
 
     for elem in fields:
-        (path, name) = elem
-        value = getValueFromDict(data, path)
+        (path, name, *dataType) = elem
+        value = getValueFromDict(data, path, dataType)
         createField(newData, name, value)
 
     return newData

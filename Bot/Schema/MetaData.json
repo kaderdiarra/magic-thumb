@@ -4,6 +4,7 @@
     "$jsonSchema": {
       "bsonType": "object",
       "required": [
+        "mediaId",
         "videoUrl",
         "videoDuration",
         "shortcode",
@@ -12,6 +13,10 @@
         "videoPath"
       ],
       "properties": {
+        "mediaId": {
+          "bsonType": "long",
+          "description": "must be an number and is required"
+        },
         "videoUrl": {
           "bsonType": "string",
           "description": "must be a string and is required"
