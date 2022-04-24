@@ -1,19 +1,14 @@
 from turtle import pos
 import instaloader
+from dotenv import load_dotenv
 from Database import Database
+from os import getenv
 from Parser import Parser
 
-USER = "atlas.invictus"
-PASSWORD = "jea1ykh.DUR5uxw@htd"
-USER_NAME = "atlas.invictus"
+load_dotenv()
 
-# download video
-# remove useless data
-# save video in db
-# remove video from computer
-
-# save post id 
-
+PASSWORD = getenv("PASSWORD")
+USER_NAME = getenv("USER_NAME")
 FILE_NAME_PATTERN = "{mediaid}_{owner_id}"
 DIR_NAME_PATTERN = "collection"
 
@@ -45,10 +40,9 @@ class Bot:
                 res = self.loader.download_post(post, target=DIR_NAME_PATTERN)
                 print('media id: ', post.mediaid)
                 print(f'post: {post} downloaded: {res}')
-            return
 
     def run(self):
-        self.loader.login(USER, PASSWORD)
+        self.loader.login(USER_NAME, PASSWORD)
         self.downloadPost()
         metaData = self.parser.run()
         self.store(metaData)

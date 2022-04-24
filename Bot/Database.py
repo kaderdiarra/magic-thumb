@@ -3,12 +3,12 @@ from wsgiref.validate import validator
 from pymongo import MongoClient
 import pymongo
 from glob import glob
-from os import getcwd
+from os import getcwd, getenv
 from utils import loadData
 from collections import OrderedDict
 
-CONNECTION_STRING = "mongodb://localhost:27017"
-DATABASE_NAME = "magic-thumb"
+CONNECTION_STRING = getenv("CONNECTION_STRING")
+DATABASE_NAME = getenv("DATABASE_NAME")
 MODEL_LOCATION = getcwd() + "/Schema/"
 COLLECTIONS_NAMES = ["metadatas"]
 
