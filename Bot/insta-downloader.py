@@ -1,9 +1,11 @@
 from turtle import pos
 import instaloader
 from dotenv import load_dotenv
-from Database import Database
 from os import getenv
+
+from Database import Database
 from Parser import Parser
+from Media import Media
 
 load_dotenv()
 
@@ -17,6 +19,7 @@ class Bot:
         self.loader = instaloader.Instaloader(download_pictures=False, download_videos=True, download_video_thumbnails=False, post_metadata_txt_pattern="", compress_json=False, filename_pattern=FILE_NAME_PATTERN)
         self.parser = Parser()
         self.db = Database().getDatabase()
+        self.media = Media()
 
     def getExistingMetaDataIds(self) -> list :
         data = list(self.db.metadatas.find({}, {"mediaId": 1, "_id": 0}))
@@ -38,7 +41,6 @@ class Bot:
         for post in collection:
             if (post.mediaid not in mediaIds) and post.is_video:
                 res = self.loader.download_post(post, target=DIR_NAME_PATTERN)
-                print('media id: ', post.mediaid)
                 print(f'post: {post} downloaded: {res}')
 
     def run(self):
@@ -47,8 +49,12 @@ class Bot:
         metaData = self.parser.run()
         self.store(metaData)
 
+    def test(self):
+        self.media.upload()
+
 def main():
-    Bot().run()
+    # Bot().run()
+    Bot().test()
     # print(Bot().getExistingMetaDataIds())
     # Database().getDatabase().metadatas.drop()
     # Bot().parser.run()

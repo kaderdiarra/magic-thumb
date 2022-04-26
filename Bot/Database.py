@@ -6,6 +6,9 @@ from glob import glob
 from os import getcwd, getenv
 from utils import loadData
 from collections import OrderedDict
+from dotenv import load_dotenv
+
+load_dotenv()
 
 CONNECTION_STRING = getenv("CONNECTION_STRING")
 DATABASE_NAME = getenv("DATABASE_NAME")
