@@ -1,4 +1,5 @@
 import json
+from os import path as osPath
 
 def verifyKeys(keys):
     if len(keys) == 0:
@@ -52,7 +53,10 @@ def getValueFromDict(element: dict, keyPath: str, dataType):
     _element = dict(element)
     try:
         for key in keys:
-            _element = _element[key]
+            if isinstance(_element[key], list):
+                _element = _element[key][0]
+            else:
+                _element = _element[key]
     except:
         return None
     return cast(_element, dataType)
@@ -72,3 +76,19 @@ def loadData(filePath: str):
     data = json.load(file)
     file.close()
     return data
+
+def matchArraysItem(list_1: list, list_2: list):
+    sourceList = None
+    targetList = None
+    if len(list_1) > len(list_2):
+        sourceList = list_2
+        targetList = list_1
+    else:
+        sourceList = list_1
+        targetList = list_2
+    for index, sourceItem in enumerate(sourceList):
+        id = osPath.basename(sourceItem).split('.')[0]
+        for i, targetItem in enumerate(targetList):
+            if id in targetItem:
+                targetList[i], targetList[index] = targetList[index], targetList[i]
+    return (list_1, list_2)

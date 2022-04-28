@@ -2,7 +2,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-from os import getenv
+from os import getenv, remove as removeFileInLocal, path as osPath
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,18 +14,36 @@ cloudinary.config(
   secure = True
 )
 
+MEDI_FOLDER_NAME = getenv("CLOUDINARY_MEDIA_FOLDER_NAME")
+
 class Media:
     def __init__(self) -> None:
         pass
-    
-    def upload(self):
-      mediaInfo = cloudinary.uploader.upload("./collection/2814040079704622461_45327087258.mp4",
-        folder = "test/",
-        public_id = "first_video_test",
+
+    def upload(self, filePath, fileName, folderName, mediaType):
+      mediaInfo = cloudinary.uploader.upload(filePath,
+        folder = folderName,
+        public_id = fileName,
         overwrite = True,
         notification_url = "https://mysite.example.com/notify_endpoint", # TODO: replace by real endpoint
-        resource_type = "video")
+        resource_type = mediaType)
 
-      # mediaInfo["secure_url"] # TODO: save in db (video reference)
-      # mediaInfo[""]
-      print(mediaInfo)
+      return mediaInfo
+
+
+    def storeMediaInCloudinary(self, medias):
+      for index, media in enumerate(medias):
+        try:
+          videoPath = media["videoPath"]
+          fileName = media["mediaId"]
+          mediaType = "video" # TODO: in future, find a way to figure out if media is video or picture
+          uploadedMediaInfo = self.upload(videoPath, fileName, MEDI_FOLDER_NAME, mediaType)
+          media["reference_url"] = uploadedMediaInfo["secure_url"]
+          removeFileInLocal(videoPath) #* Remove video file after upload it
+        except Exception as error:
+          if (osPath.isfile(videoPath)):
+            removeFileInLocal(videoPath)
+          medias.pop(index)
+          print(error)
+      
+      return medias

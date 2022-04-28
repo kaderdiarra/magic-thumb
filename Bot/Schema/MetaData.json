@@ -9,8 +9,8 @@
         "videoDuration",
         "shortcode",
         "owner",
-        "filePath",
-        "videoPath"
+        "videoPath",
+        "caption"
       ],
       "properties": {
         "mediaId": {
@@ -29,11 +29,11 @@
           "bsonType": "string",
           "description": "must be a string and is required"
         },
-        "filePath": {
+        "videoPath": {
           "bsonType": "string",
           "description": "must be a string and is required"
         },
-        "videoPath": {
+        "caption": {
           "bsonType": "string",
           "description": "must be a string and is required"
         },

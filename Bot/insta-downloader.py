@@ -1,8 +1,6 @@
-from turtle import pos
 import instaloader
 from dotenv import load_dotenv
-from os import getenv
-
+from os import getenv, removedirs, getcwd
 from Database import Database
 from Parser import Parser
 from Media import Media
@@ -13,6 +11,7 @@ PASSWORD = getenv("PASSWORD")
 USER_NAME = getenv("USER_NAME")
 FILE_NAME_PATTERN = "{mediaid}_{owner_id}"
 DIR_NAME_PATTERN = "collection"
+COLLECTION_LOCATION = getcwd() + "/collection/"
 
 class Bot:
     def __init__(self):
@@ -29,7 +28,7 @@ class Bot:
         return mediaIds
         
 
-    def store(self, element):
+    def storeMetaDataInDb(self, element):
         if element:
             self.db.metadatas.insert_many(element)
 
@@ -37,7 +36,6 @@ class Bot:
         profile = instaloader.Profile.from_username(self.loader.context, USER_NAME)
         collection = profile.get_saved_posts()
         mediaIds = self.getExistingMetaDataIds()
-        print(mediaIds)
         for post in collection:
             if (post.mediaid not in mediaIds) and post.is_video:
                 res = self.loader.download_post(post, target=DIR_NAME_PATTERN)
@@ -47,14 +45,13 @@ class Bot:
         self.loader.login(USER_NAME, PASSWORD)
         self.downloadPost()
         metaData = self.parser.run()
-        self.store(metaData)
-
-    def test(self):
-        self.media.upload()
+        metaData = self.media.storeMediaInCloudinary(metaData)
+        self.storeMetaDataInDb(metaData)
+        removedirs(COLLECTION_LOCATION)
 
 def main():
-    # Bot().run()
-    Bot().test()
+    Bot().run()
+    # Parser().run()
     # print(Bot().getExistingMetaDataIds())
     # Database().getDatabase().metadatas.drop()
     # Bot().parser.run()
