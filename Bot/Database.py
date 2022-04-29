@@ -12,7 +12,7 @@ load_dotenv()
 
 CONNECTION_STRING = getenv("CONNECTION_STRING")
 DATABASE_NAME = getenv("DATABASE_NAME")
-MODEL_LOCATION = getcwd() + "/Schema/"
+MODEL_LOCATION = getcwd() + "/schema/"
 COLLECTIONS_NAMES = ["metadatas"]
 
 class Database:

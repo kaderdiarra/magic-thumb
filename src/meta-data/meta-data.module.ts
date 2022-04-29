@@ -1,0 +1,16 @@
+import { Module } from '@nestjs/common';
+import { MetaDataService } from './meta-data.service';
+import { MetaDataController } from './meta-data.controller';
+import { MetaData, MetaDataSchema } from './schema/meta-data.schema';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: MetaData.name, schema: MetaDataSchema },
+    ]),
+  ],
+  providers: [MetaDataService],
+  controllers: [MetaDataController],
+})
+export class MetaDataModule {}
