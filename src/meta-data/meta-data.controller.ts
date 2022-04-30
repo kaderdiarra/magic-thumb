@@ -6,14 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateMetaDataDto } from './dto/create-meta-data.dto';
 import { MetaDataService } from './meta-data.service';
-import { MetaData } from './schema/meta-data.schema';
+import { MetaData } from './schema';
 
 @Controller('metadata')
 export class MetaDataController {
   constructor(private metaDataService: MetaDataService) {}
+
+  @Get('pagination')
+  pagination(@Query('page') page: string) {
+    return this.metaDataService.pagination(+page);
+  }
 
   @Post()
   create(@Body() dto: CreateMetaDataDto) {
@@ -27,16 +33,16 @@ export class MetaDataController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.metaDataService.findOne(+id);
+    return this.metaDataService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: MetaData) {
-    return this.metaDataService.update(+id, dto);
+    return this.metaDataService.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.metaDataService.remove(+id);
+    return this.metaDataService.remove(id);
   }
 }
