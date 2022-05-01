@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { MetaData, MetaDataDocument } from './schema/meta-data.schema';
 import { CreateMetaDataDto } from './dto/create-meta-data.dto';
-import { ITEMS_PER_PAGE } from 'src/constant';
+import { ITEMS_PER_PAGE } from '../constant';
 
 @Injectable()
 export class MetaDataService {
