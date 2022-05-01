@@ -26,7 +26,7 @@ class Bot:
         for item in data:
             mediaIds.append(item["mediaId"])
         return mediaIds
-        
+
 
     def storeMetaDataInDb(self, element):
         if element:
@@ -51,6 +51,7 @@ class Bot:
 
 def main():
     Bot().run()
+    # print(Media().removeMediaFromCloudinary(["2817808834519857686", "2814040079704622461"]))
     # Parser().run()
     # print(Bot().getExistingMetaDataIds())
     # Database().getDatabase().metadatas.drop()

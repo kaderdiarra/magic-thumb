@@ -20,12 +20,12 @@ class Media:
     def __init__(self) -> None:
         pass
 
-    def upload(self, filePath, fileName, folderName, mediaType):
+    def upload(self, filePath, publicId, folderName, mediaType):
       mediaInfo = cloudinary.uploader.upload(filePath,
         folder = folderName,
-        public_id = fileName,
+        public_id = publicId,
         overwrite = True,
-        notification_url = "https://mysite.example.com/notify_endpoint", # TODO: replace by real endpoint
+        notification_url = "https://mysite.example.com/notify_endpoint", # TODO: replace by real endpoint | create endpoint in server, when triggered send socket to client
         resource_type = mediaType)
 
       return mediaInfo
@@ -35,9 +35,9 @@ class Media:
       for index, media in enumerate(medias):
         try:
           videoPath = media["videoPath"]
-          fileName = media["mediaId"]
+          publicId = media["mediaId"]
           mediaType = "video" # TODO: in future, find a way to figure out if media is video or picture
-          uploadedMediaInfo = self.upload(videoPath, fileName, MEDI_FOLDER_NAME, mediaType)
+          uploadedMediaInfo = self.upload(videoPath, publicId, MEDI_FOLDER_NAME, mediaType)
           media["reference_url"] = uploadedMediaInfo["secure_url"]
           removeFileInLocal(videoPath) #* Remove video file after upload it
         except Exception as error:
@@ -47,3 +47,17 @@ class Media:
           print(error)
       
       return medias
+
+    def addPrefixToPublicId(self, element: list | str, prefix: str):
+      if isinstance(element, list):
+        for index in range(len(element)):
+          element[index] = osPath.join(prefix, element[index])
+      else:
+        element = osPath.join(prefix, element)
+      return element
+
+    def removeMediaFromCloudinary(self, mediaIds: list | str, folderName=MEDI_FOLDER_NAME, resourceType="video", **options): # removeMediaFromCloudinary(["42423542"], resource_type="video")
+      mediaIds = self.addPrefixToPublicId(mediaIds, folderName)
+
+      res = cloudinary.api.delete_resources(public_ids=mediaIds, resource_type=resourceType, options=options)
+      return res
