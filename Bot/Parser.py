@@ -6,7 +6,6 @@ COLLECTION_LOCATION = getcwd() + "/collection/"
 META_DATA_FIELD = [
     # (path, name)
     ('node.id', 'mediaId', int),
-    ('node.video_url', 'videoUrl'),
     ('node.video_duration', 'videoDuration', float),
     ('node.shortcode', 'shortcode'),
     ('node.owner.username', 'owner.username'),
@@ -29,7 +28,6 @@ class Parser:
             try:
                 data = loadData(path)
                 parsedData = getFieldFromDict(data, META_DATA_FIELD)
-                parsedData['filePath'] = path
                 parsedData['videoPath'] = videosPath[index]
                 parsedData['videoUrlToInstagram'] = INSTAGRAM_POST_BASE_URL + parsedData["shortcode"]
                 metaDataList.append(parsedData)

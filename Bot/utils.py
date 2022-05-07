@@ -92,3 +92,12 @@ def matchArraysItem(list_1: list, list_2: list):
             if id in targetItem:
                 targetList[i], targetList[index] = targetList[index], targetList[i]
     return (list_1, list_2)
+
+def removeFieldFromDict(element: dict, fieldName: str):
+    if not isinstance(element, dict): return None
+    try:
+        field = element[fieldName]
+        del element[fieldName]
+        return field
+    except:
+        return None

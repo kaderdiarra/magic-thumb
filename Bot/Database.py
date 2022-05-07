@@ -18,6 +18,7 @@ COLLECTIONS_NAMES = ["metadatas"]
 class Database:
     def __init__(self) -> None:
         self.client = MongoClient(CONNECTION_STRING)
+        self.db = None
         #postIds = []
         pass
 
@@ -32,6 +33,7 @@ class Database:
         db = self.client[DATABASE_NAME]
         self.createCollection(db)
         self.updateValidationSchemas(db)
+        self.db = db
         return db
 
     def updateValidationSchemas(self, db):
@@ -40,3 +42,14 @@ class Database:
             schemaJson = loadData(path)
             schema = OrderedDict(schemaJson)
             db.command(schema)
+
+    def getExistingMetaDataIds(self) -> list :
+        data = list(self.db.metadatas.find({}, {"mediaId": 1, "_id": 0}))
+        mediaIds = []
+        for item in data:
+            mediaIds.append(item["mediaId"])
+        return mediaIds
+
+    def storeMetaDataInDb(self, element):
+        if element:
+            self.db.metadatas.insert_many(element)

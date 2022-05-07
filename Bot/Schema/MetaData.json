@@ -5,21 +5,17 @@
       "bsonType": "object",
       "required": [
         "mediaId",
-        "videoUrl",
         "videoDuration",
         "shortcode",
         "owner",
-        "videoPath",
-        "caption"
+        "caption",
+        "referenceUrl",
+        "videoUrlToInstagram"
       ],
       "properties": {
         "mediaId": {
           "bsonType": "long",
           "description": "must be an number and is required"
-        },
-        "videoUrl": {
-          "bsonType": "string",
-          "description": "must be a string and is required"
         },
         "videoDuration": {
           "bsonType": "double",
@@ -29,11 +25,15 @@
           "bsonType": "string",
           "description": "must be a string and is required"
         },
-        "videoPath": {
+        "caption": {
           "bsonType": "string",
           "description": "must be a string and is required"
         },
-        "caption": {
+        "referenceUrl": {
+          "bsonType": "string",
+          "description": "must be a string and is required"
+        },
+        "videoUrlToInstagram": {
           "bsonType": "string",
           "description": "must be a string and is required"
         },

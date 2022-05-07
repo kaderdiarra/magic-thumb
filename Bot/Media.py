@@ -4,6 +4,7 @@ import cloudinary.api
 
 from os import getenv, remove as removeFileInLocal, path as osPath
 from dotenv import load_dotenv
+from utils import removeFieldFromDict
 
 load_dotenv()
 
@@ -38,7 +39,8 @@ class Media:
           publicId = media["mediaId"]
           mediaType = "video" # TODO: in future, find a way to figure out if media is video or picture
           uploadedMediaInfo = self.upload(videoPath, publicId, MEDI_FOLDER_NAME, mediaType)
-          media["reference_url"] = uploadedMediaInfo["secure_url"]
+          media["referenceUrl"] = uploadedMediaInfo["secure_url"]
+          removeFieldFromDict(media, "videoPath")
           removeFileInLocal(videoPath) #* Remove video file after upload it
         except Exception as error:
           if (osPath.isfile(videoPath)):
