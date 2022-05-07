@@ -1,61 +1,93 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import {
+  DELAY_BEFORE_PLAY,
+  LIMIT_TO_LOAD_PAGE,
+  STOP_SCROLL_DELAY,
+} from "./constants";
 import { ListItem } from "./ListItem";
 import { MetaData } from "./types";
 
 type Props = {
   data: MetaData[];
+  page: number;
+  nbrOfPage: number;
+  loadPage: (page: number) => void;
 };
 
 type Video = HTMLVideoElement | null;
 
-export const List = ({ data }: Props): JSX.Element => {
+export const List = ({
+  data,
+  page,
+  nbrOfPage,
+  loadPage,
+}: Props): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const listRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
   const prevClosestItemIndex = useRef<number>(0);
 
+  const updateDisplayedItem = useCallback(
+    (currentDisplayedItemIndex: number) => {
+      if (prevClosestItemIndex.current !== currentDisplayedItemIndex) {
+        prevClosestItemIndex.current = currentDisplayedItemIndex;
+        // check if nbr item === limit => load new page
+        const listLength = itemRefs.current.length;
+        if (
+          listLength - (currentDisplayedItemIndex + 1) <=
+          LIMIT_TO_LOAD_PAGE
+        ) {
+          if (page <= nbrOfPage) loadPage(page);
+        }
+        setCurrentIndex(() => {
+          const video = itemRefs.current[currentIndex].children[1] as Video;
+          stopVideo(video);
+          const nextVideo = itemRefs.current[currentDisplayedItemIndex]
+            .children[1] as Video;
+          playVideo(nextVideo, DELAY_BEFORE_PLAY);
+          return currentDisplayedItemIndex;
+        });
+      }
+    },
+    [currentIndex, loadPage, nbrOfPage, page]
+  );
+
   useEffect(() => {
     const destroyListener = createScrollStopListener(
       listRef.current,
       () => {
-        let closestItemIndex = 0;
-        let previousDistance = 0;
-        const scrollTop = listRef.current?.scrollTop ?? 0;
-        // find position of item where scroll bar is
-        itemRefs.current.forEach((item, index) => {
-          const distance = Math.abs(item.offsetTop - scrollTop);
-          if (index === 0) previousDistance = distance;
-          if (distance < previousDistance) {
-            previousDistance = distance;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            closestItemIndex = index;
-          }
-        });
-
-        // stop previous video playing and start next one
-        if (prevClosestItemIndex.current !== closestItemIndex) {
-          prevClosestItemIndex.current = closestItemIndex;
-          setCurrentIndex((prev) => {
-            const video = itemRefs.current[currentIndex].children[1] as Video;
-            video?.pause();
-            const nextVideo = itemRefs.current[closestItemIndex]
-              .children[1] as Video;
-            playVideo(nextVideo);
-            return closestItemIndex;
-          });
-        }
+        const currentDisplayedItemIndex = getCurrentDisplayedItemIndex();
+        updateDisplayedItem(currentDisplayedItemIndex);
       },
-      500
+      STOP_SCROLL_DELAY
     );
 
     return () => destroyListener();
-  }, [currentIndex]);
+  }, [updateDisplayedItem]);
 
-  // const startPlayingVideo = async () => {
-  //   const item = itemRefs.current[0];
-  //   const itemVideo = item.children[1] as Video;
-  //   await itemVideo?.play();
-  // };
+  const getCurrentDisplayedItemIndex = (): number => {
+    let closestItemIndex = 0;
+    let previousDistance = 0;
+    const scrollTop = listRef.current?.scrollTop ?? 0;
+    // find position of item where scroll bar is
+    itemRefs.current.forEach((item, index) => {
+      const distance = Math.abs(item.offsetTop - scrollTop);
+      if (index === 0) previousDistance = distance;
+      if (distance < previousDistance) {
+        previousDistance = distance;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        closestItemIndex = index;
+      }
+    });
+    return closestItemIndex;
+  };
+
+  const stopVideo = (video: Video) => {
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  };
 
   const playVideo = async (video: Video, delay = 1000) => {
     if (!delay) {
@@ -75,12 +107,8 @@ export const List = ({ data }: Props): JSX.Element => {
       const nextItem = itemRefs.current[nextItemIndex];
       const offsetHeight = nextItem.offsetHeight;
       const scrollTop = nextItemIndex * offsetHeight;
-      const nextItemVideo = nextItem.children[1] as Video;
-
       listRef.current.scrollTop = scrollTop;
 
-      playVideo(nextItemVideo);
-      console.log("UPDATE CURRENT INDEX 🚀");
       setCurrentIndex((prev) => prev + 1);
     }
   };
@@ -93,7 +121,7 @@ export const List = ({ data }: Props): JSX.Element => {
     const items = data.map((item, index) => {
       return (
         <ListItem
-          key={`item-key-${item.id}`}
+          key={`item-key-${item._id}`}
           // id={`item-id-${item.id}`}
           elementRef={createListItemRef}
           item={item}

@@ -1,6 +1,13 @@
 export type MetaData = {
-  id: number;
-  description: string;
-  video: string;
-  videoType: string;
+  _id: string;
+  mediaId: string;
+  videoDuration: number;
+  shortcode: string;
+  caption: string;
+  referenceUrl: string;
+  videoUrlToInstagram: string;
+  owner: {
+    username: string;
+    profilePicUrl: string;
+  };
 };

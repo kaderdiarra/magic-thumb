@@ -8,8 +8,9 @@ async function bootstrap() {
     cert: fs.readFileSync(__dirname + '/../certs/certificate.pem'),
   };
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  const app = await NestFactory.create(AppModule /*{ httpsOptions }*/);
   // TODO: enable cors
+  app.enableCors({ origin: '*' });
   await app.listen(3333);
 }
 bootstrap();

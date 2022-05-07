@@ -42,9 +42,9 @@ export const ListItem = ({
         justifyContent: "center",
       }}
     >
-      <h2>{item.description}</h2>
+      <h2>good video</h2>
       <video width="60%" height="60%" controls onEnded={() => scrollDown()}>
-        <source src={item.video} type={item.videoType} />
+        <source src={item.referenceUrl} type={"video/mp4"} />
         Your browser does not support the video tag.
       </video>
     </div>

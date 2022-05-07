@@ -6,9 +6,6 @@ export type MetaDataDocument = MetaData & Document;
 @Schema()
 export class MetaData {
   @Prop({ required: true })
-  videoUrl: number;
-
-  @Prop({ required: true })
   mediaId: string;
 
   @Prop({ required: true })
@@ -26,10 +23,13 @@ export class MetaData {
   owner: Record<string, any>;
 
   @Prop({ required: true })
-  videoPath: string;
+  caption: string;
 
   @Prop({ required: true })
-  caption: string;
+  referenceUrl: string;
+
+  @Prop({ required: true })
+  videoUrlToInstagram: string;
 }
 
 export const MetaDataSchema = SchemaFactory.createForClass(MetaData);

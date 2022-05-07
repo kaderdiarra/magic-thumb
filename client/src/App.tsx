@@ -1,5 +1,4 @@
-import { List } from "./List";
-import data from "./data.json";
+import { Main } from "./Main";
 
 function App() {
   return (
@@ -11,7 +10,7 @@ function App() {
           backgroundColor: "red",
         }}
       >
-        <List data={data} />
+        <Main />
       </div>
     </div>
   );
