@@ -6,9 +6,13 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoService } from './mongo/mongo.service';
 import { AppService } from './app.service';
+import { RabbitModule } from './rabbit/rabbit.module';
+import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
   imports: [
+    RabbitModule,
+    MessagingModule,
     MongoModule,
     MetaDataModule,
     ConfigModule.forRoot({

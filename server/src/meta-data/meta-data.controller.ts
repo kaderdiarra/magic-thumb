@@ -8,13 +8,26 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { MessagingService } from 'src/messaging/messaging.service';
 import { CreateMetaDataDto } from './dto/create-meta-data.dto';
 import { MetaDataService } from './meta-data.service';
 import { MetaData } from './schema';
 
 @Controller('metadata')
 export class MetaDataController {
-  constructor(private metaDataService: MetaDataService) {}
+  constructor(
+    private metaDataService: MetaDataService,
+    private messagingService: MessagingService,
+  ) {}
+
+  @Get('messaging')
+  testMessaging() {
+    this.messagingService.publish<{ title: string; data: any }>(
+      'operation',
+      'operation.task',
+      { title: 'update_po', data: 'test messaging system' },
+    );
+  }
 
   @Get('pagination')
   pagination(@Query('page') page: string) {
