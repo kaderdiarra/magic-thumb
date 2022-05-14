@@ -48,7 +48,11 @@ class Bot:
         print("remove posts", ids)
 
     def run(self):
-        self.rabbitmq.consume()
+        try:
+            self.rabbitmq.consume()
+        except Exception as error:
+            print(error)
+            self.rabbitmq.consume()
 
 def main():
     Bot().run()

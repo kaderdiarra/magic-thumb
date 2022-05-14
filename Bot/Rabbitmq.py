@@ -2,6 +2,10 @@ import pika
 import json
 from typing import Any
 
+#Error code
+    # 404 not found
+
+
 EXCHANGE_NAME="operation"
 
 class Rabbitmq:
@@ -22,7 +26,7 @@ class Rabbitmq:
         self.channel.queue_bind(
             exchange=EXCHANGE_NAME,
             queue=queueName,
-            routing_key=EXCHANGE_NAME + "." + routingKey
+            routing_key=EXCHANGE_NAME + "." + routingKey,
         )
         self.channel.basic_consume(queue=queueName, on_message_callback=callback)
         print(f'[*] Queue: "{queueName}" start consuming...')
@@ -32,6 +36,7 @@ class Rabbitmq:
 
     def taskQueueCallback(self, ch, method, properties, body):
         payload = json.loads(body)
+        print("PAYLOAD:", payload)
         title = payload.get("title")
         data = payload.get("data")
         match title:
@@ -40,7 +45,11 @@ class Rabbitmq:
             case "remove_posts":
                 self.executeMethod(method=self.removePosts, ch=ch, callbackMethod=method, title=title, data=data)
             case _:
-                self.publish(routingKey="operation.error", title="title_not_found")
+                errorInfo = {
+                    "msg": "title: {title} does not exist",
+                    "code": 404,
+                }
+                self.publish(routingKey="operation.result", title="error", data=errorInfo)
 
     def publish(self, routingKey: str, title: str, data=None) -> None:
         self.channel.basic_publish(
@@ -57,8 +66,17 @@ class Rabbitmq:
         try:
             method(data)
             ch.basic_ack(delivery_tag=callbackMethod.delivery_tag)
-            self.publish(routingKey="operation.error", title="update_posts_succed")
+            self.publish(routingKey="operation.result", title="update_posts_succed")
             print(f'[x] Message "[{title}]" has [SUCCED ✅]')
-        except Exception as error:
-            self.publish(routingKey="operation.error", title="update_posts_failed", data=error)
+        except Exception as e:
+            print(e)
             print(f'[x] Message "{title}" has [FAILED ❌]')
+            errorInfo = {
+                "msg": "internal error",
+                "code": 500,
+                "sendedMessageInfo": {
+                    "title": title,
+                    "data": data,
+                }
+            }
+            self.publish(routingKey="operation.result", title="error", data=errorInfo)
