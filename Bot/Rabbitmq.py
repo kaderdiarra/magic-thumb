@@ -4,6 +4,7 @@ from typing import Any
 
 #Error code
     # 404 not found
+    # 500 internal error
 
 
 EXCHANGE_NAME="operation"
