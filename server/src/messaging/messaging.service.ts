@@ -1,18 +1,19 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
+import { MessagePayload } from 'src/types';
 
 @Injectable()
 export class MessagingService {
   constructor(private readonly ampqConnection: AmqpConnection) {}
 
-  async publish<T>(
+  async publish(
     exchange: string,
     routingKey: string,
-    payload: T,
+    payload: MessagePayload,
     options?: any,
   ): Promise<void> {
-    await this.ampqConnection.publish(exchange, routingKey, payload, options);
+    this.ampqConnection.publish(exchange, routingKey, payload, options);
 
-    console.log('send message');
+    console.log(`Send message with title: [${payload.title}]`);
   }
 }

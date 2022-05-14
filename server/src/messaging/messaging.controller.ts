@@ -1,5 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Controller } from '@nestjs/common';
+import { MessagePayload } from 'src/types';
 
 @Controller('messaging')
 export class MessagingController {
@@ -9,7 +10,7 @@ export class MessagingController {
     queue: 'operation_result',
     queueOptions: { durable: false },
   })
-  operationResult(msg: object) {
-    console.log('🚀 message:', msg);
+  operationResult(msg: MessagePayload) {
+    console.log(`Receive with title: [${msg.title}]\n`, msg.data);
   }
 }

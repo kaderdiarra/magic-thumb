@@ -1,9 +1,8 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MessagingController } from 'src/messaging/messaging.controller';
 import { MessagingService } from 'src/messaging/messaging.service';
 
-@Global()
 @Module({
   imports: [
     RabbitMQModule.forRoot(RabbitMQModule, {

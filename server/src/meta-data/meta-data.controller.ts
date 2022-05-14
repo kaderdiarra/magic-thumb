@@ -22,11 +22,10 @@ export class MetaDataController {
 
   @Get('messaging')
   testMessaging() {
-    this.messagingService.publish<{ title: string; data: any }>(
-      'operation',
-      'operation.task',
-      { title: 'update_po', data: 'test messaging system' },
-    );
+    this.messagingService.publish('operation', 'operation.task', {
+      title: 'update_po',
+      data: 'test messaging system',
+    });
   }
 
   @Get('pagination')
