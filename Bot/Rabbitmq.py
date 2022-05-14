@@ -46,10 +46,8 @@ class Rabbitmq:
             case "remove_posts":
                 self.executeMethod(method=self.removePosts, ch=ch, callbackMethod=method, title=title, data=data)
             case _:
-                errorInfo = {
-                    "msg": "title: {title} does not exist",
-                    "code": 404,
-                }
+                errorInfo = self.createErrorInfo(msg="title not found", code=404, title=title, data=data)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
                 self.publish(routingKey="operation.result", title="error", data=errorInfo)
 
     def publish(self, routingKey: str, title: str, data=None) -> None:
@@ -72,12 +70,16 @@ class Rabbitmq:
         except Exception as e:
             print(e)
             print(f'[x] Message "{title}" has [FAILED ❌]')
-            errorInfo = {
-                "msg": "internal error",
-                "code": 500,
-                "sendedMessageInfo": {
-                    "title": title,
-                    "data": data,
-                }
-            }
+            errorInfo = self.createErrorInfo(msg="internal error", code=500, title=title, data=data)
+            ch.basic_ack(delivery_tag=callbackMethod.delivery_tag)
             self.publish(routingKey="operation.result", title="error", data=errorInfo)
+
+    def createErrorInfo(self, msg: str, code: int, title: str, data):
+        return {
+            "msg": msg,
+            "code": code,
+            "sendedMessageInfo": {
+                "title": title,
+                "data": data,
+            }
+        }
