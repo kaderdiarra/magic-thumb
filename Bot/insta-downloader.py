@@ -10,7 +10,7 @@ from Rabbitmq import Rabbitmq
 load_dotenv()
 
 PASSWORD = getenv("PASSWORD")
-USER_NAME = getenv("USER_NAME")
+USERNAME = getenv("USERNAME")
 FILE_NAME_PATTERN = "{mediaid}_{owner_id}"
 DIR_NAME_PATTERN = "collection"
 COLLECTION_LOCATION = getcwd() + "/collection/"
@@ -25,7 +25,7 @@ class Bot:
         self.rabbitmq = Rabbitmq(self.updatePosts, self.removePosts)
 
     def downloadPost(self):
-        profile = instaloader.Profile.from_username(self.loader.context, USER_NAME)
+        profile = instaloader.Profile.from_username(self.loader.context, USERNAME)
         collection = profile.get_saved_posts()
         mediaIds = self.dbManager.getExistingMetaDataIds()
         for post in collection:
