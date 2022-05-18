@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -20,12 +22,15 @@ export class MetaDataController {
     private messagingService: MessagingService,
   ) {}
 
-  @Get('messaging')
-  testMessaging() {
-    this.messagingService.publish('operation', 'operation.task', {
-      title: 'update_po',
-      data: 'test messaging system',
-    });
+  @Get('updateposts')
+  @HttpCode(HttpStatus.OK)
+  updatePosts() {
+    this.messagingService.updatePosts();
+  }
+
+  @Delete('removeposts')
+  removePosts() {
+    return this.messagingService.removePosts();
   }
 
   @Get('pagination')

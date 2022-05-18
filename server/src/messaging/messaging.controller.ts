@@ -11,6 +11,8 @@ export class MessagingController {
     queueOptions: { durable: false },
   })
   operationResult(msg: MessagePayload) {
-    console.log(`Receive with title: [${msg.title}]\n`, msg.data);
+    console.log(`Receive message with title: [${msg.title}]\n`, {
+      data: msg.data,
+    });
   }
 }
