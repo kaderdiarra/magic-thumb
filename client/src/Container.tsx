@@ -4,7 +4,7 @@ import {
   LIMIT_TO_LOAD_PAGE,
   STOP_SCROLL_DELAY,
 } from "./constants";
-import { ListItem } from "./ListItem";
+import { Item } from "./Item";
 import { MetaData } from "./types";
 
 type Props = {
@@ -16,7 +16,12 @@ type Props = {
 
 type Video = HTMLVideoElement | null;
 
-export const List = ({
+type ItemRefs = {
+  ref?: HTMLDivElement;
+  videoRef?: Video;
+};
+
+export const Container = ({
   data,
   page,
   nbrOfPage,
@@ -24,7 +29,7 @@ export const List = ({
 }: Props): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const listRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<HTMLDivElement[]>([]);
+  const itemRefs = useRef<ItemRefs[]>([]);
   const prevClosestItemIndex = useRef<number>(0);
 
   const updateDisplayedItem = useCallback(
@@ -40,10 +45,10 @@ export const List = ({
           if (page <= nbrOfPage) loadPage(page);
         }
         setCurrentIndex(() => {
-          const video = itemRefs.current[currentIndex].children[1] as Video;
+          const video = itemRefs.current[currentIndex].videoRef as Video;
           stopVideo(video);
           const nextVideo = itemRefs.current[currentDisplayedItemIndex]
-            .children[1] as Video;
+            .videoRef as Video;
           playVideo(nextVideo, DELAY_BEFORE_PLAY);
           return currentDisplayedItemIndex;
         });
@@ -71,7 +76,7 @@ export const List = ({
     const scrollTop = listRef.current?.scrollTop ?? 0;
     // find position of item where scroll bar is
     itemRefs.current.forEach((item, index) => {
-      const distance = Math.abs(item.offsetTop - scrollTop);
+      const distance = item.ref ? Math.abs(item.ref.offsetTop - scrollTop) : 0;
       if (index === 0) previousDistance = distance;
       if (distance < previousDistance) {
         previousDistance = distance;
@@ -90,6 +95,10 @@ export const List = ({
   };
 
   const playVideo = async (video: Video, delay = 1000) => {
+    console.log(
+      "🚀 ~ file: Container.tsx ~ line 98 ~ playVideo ~ video",
+      video
+    );
     if (!delay) {
       await video?.play();
       return;
@@ -105,7 +114,7 @@ export const List = ({
     if (currentIndex + 1 < data.length) {
       const nextItemIndex = currentIndex + 1;
       const nextItem = itemRefs.current[nextItemIndex];
-      const offsetHeight = nextItem.offsetHeight;
+      const offsetHeight = nextItem.ref ? nextItem.ref.offsetHeight : 0;
       const scrollTop = nextItemIndex * offsetHeight;
       listRef.current.scrollTop = scrollTop;
 
@@ -113,17 +122,34 @@ export const List = ({
     }
   };
 
-  const createListItemRef = (element: HTMLDivElement, index: number) => {
-    itemRefs.current[index] = element;
+  const createItemRef = (element: HTMLDivElement, index: number) => {
+    if (itemRefs.current[index]) {
+      itemRefs.current[index].ref = element;
+      return;
+    }
+    itemRefs.current[index] = {
+      ref: element,
+    };
+  };
+
+  const createItemVideoRef = (element: Video, index: number) => {
+    if (itemRefs.current[index]) {
+      itemRefs.current[index].videoRef = element;
+      return;
+    }
+    itemRefs.current[index] = {
+      videoRef: element,
+    };
   };
 
   const generateListItem = () => {
     const items = data.map((item, index) => {
       return (
-        <ListItem
+        <Item
           key={`item-key-${item._id}`}
           // id={`item-id-${item.id}`}
-          elementRef={createListItemRef}
+          elementRef={createItemRef}
+          videoRef={createItemVideoRef}
           item={item}
           itemIndex={index}
           scrollDown={handleScrollingDown}

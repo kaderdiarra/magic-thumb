@@ -1,7 +1,9 @@
+// import { SocketContext, socket } from "./context";
 import { Main } from "./Main";
 
 function App() {
   return (
+    // <SocketContext.Provider value={socket}>
     <div className="App">
       <div
         style={{
@@ -13,6 +15,7 @@ function App() {
         <Main />
       </div>
     </div>
+    // </SocketContext.Provider>
   );
 }
 

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { List } from "./List";
+import { useCallback, useContext, useEffect, useState } from "react";
+// import { SocketContext } from "./context";
+import { Container } from "./Container";
 import { MetaData } from "./types";
 
 export type Props = {};
@@ -17,13 +18,32 @@ export const Main = (props: Props): JSX.Element => {
     nbrOfItem: 0,
     nbrOfPage: 0,
   });
+
   const [page, setPage] = useState(1);
+  // const [joined, setJoined] = useState(false);
+
+  // const socket = useContext(SocketContext);
+
+  // const handleTestSocket = useCallback(() => {
+  //   setJoined(true);
+  // }, []);
+
+  // useEffect(() => {
+  //   socket.emit("CONNECTION");
+  //   console.log("🚀 ~ file: Main.tsx ~ line 33 ~ useEffect ~ CONNECTION");
+
+  //   socket.on("TEST_SOCKET", handleTestSocket);
+  //   return () => {
+  //     // socket.off("TEST_SOCKET", handleTestSocket);
+  //     socket.disconnect(true);
+  //   };
+  // }, [socket, handleTestSocket]);
+
   useEffect(() => {
     loadData(1);
   }, []);
 
   const loadData = async (page: number) => {
-    console.log("SEND REQUEST 🔥");
     try {
       const response = await axios.get(
         `http://localhost:3333/metadata/pagination?page=${page}`
@@ -39,18 +59,16 @@ export const Main = (props: Props): JSX.Element => {
       });
       setPage((prev) => prev + 1);
     } catch (error) {
-      console.log("🚀", error); // TODO: replace by snackbar
+      console.log(error); // TODO: replace by snackbar
     }
   };
 
   return (
-    <>
-      <List
-        data={data.items}
-        page={page}
-        nbrOfPage={data.nbrOfPage}
-        loadPage={loadData}
-      />
-    </>
+    <Container
+      data={data.items}
+      page={page}
+      nbrOfPage={data.nbrOfPage}
+      loadPage={loadData}
+    />
   );
 };
