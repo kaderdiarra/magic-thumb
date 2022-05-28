@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { useRef, useState, useEffect, useCallback } from "react";
 import {
   DELAY_BEFORE_PLAY,
@@ -147,7 +148,6 @@ export const Container = ({
       return (
         <Item
           key={`item-key-${item._id}`}
-          // id={`item-id-${item.id}`}
           elementRef={createItemRef}
           videoRef={createItemVideoRef}
           item={item}
@@ -186,11 +186,10 @@ export const Container = ({
   };
 
   return (
-    <div
+    <Box
       ref={listRef}
-      style={{
-        height: "600px",
-        backgroundColor: "green",
+      sx={{
+        height: "100%",
         overflow: "auto",
         scrollBehavior: "smooth",
         scrollSnapType: "y mandatory",
@@ -198,6 +197,6 @@ export const Container = ({
       }}
     >
       {generateListItem()}
-    </div>
+    </Box>
   );
 };

@@ -1,20 +1,26 @@
 // import { SocketContext, socket } from "./context";
+import { Box } from "@mui/material";
 import { Main } from "./Main";
+import "./index.css";
 
 function App() {
   return (
     // <SocketContext.Provider value={socket}>
-    <div className="App">
-      <div
-        style={{
-          height: 700,
-          marginTop: "2rem",
-          backgroundColor: "red",
+    <Box
+      sx={{
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+      }}
+    >
+      <Box
+        sx={{
+          height: "100%",
         }}
       >
         <Main />
-      </div>
-    </div>
+      </Box>
+    </Box>
     // </SocketContext.Provider>
   );
 }

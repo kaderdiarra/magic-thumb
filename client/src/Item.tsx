@@ -1,6 +1,6 @@
-import React from "react";
-import { Card } from "./Card";
+import { Grid } from "@mui/material";
 import { MetaData } from "./types";
+import { Card } from "./Card";
 
 type Props = {
   /**
@@ -33,33 +33,38 @@ export const Item = ({
   scrollDown,
 }: Props): JSX.Element => {
   return (
-    <div
+    <Grid
       ref={(ref) => elementRef(ref as HTMLDivElement, itemIndex)}
-      style={{
-        backgroundColor: "orange",
-        height: 600,
-        borderTopColor: "black",
-        borderTopWidth: 2,
-        borderTopStyle: "solid",
+      container
+      justifyContent="center"
+      sx={{
+        height: "100%",
         scrollSnapAlign: "start",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
       }}
     >
-      <h2>good video</h2>
-      <video
-        ref={(ref) => videoRef(ref, itemIndex)}
-        width="60%"
-        height="60%"
-        controls
-        onEnded={() => scrollDown()}
+      <Grid
+        item
+        sx={(theme) => ({
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          height: "100%",
+          [theme.breakpoints.up(640)]: {
+            width: "470px",
+          },
+          [theme.breakpoints.down(640)]: {
+            maxWidth: "468px",
+            width: "100%",
+          },
+        })}
       >
-        <source src={item.referenceUrl} type={"video/mp4"} />
-        Your browser does not support the video tag.
-      </video>
-      <Card />
-    </div>
+        <Card
+          item={item}
+          itemIndex={itemIndex}
+          videoRef={videoRef}
+          scrollDown={scrollDown}
+        />
+      </Grid>
+    </Grid>
   );
 };
