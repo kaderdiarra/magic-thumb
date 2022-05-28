@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongoService } from './mongo/mongo.service';
 import { RabbitModule } from './rabbit/rabbit.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MessagingModule } from './messaging/messaging.module';
     MongooseModule.forRootAsync({
       useClass: MongoService,
     }),
+    NotificationModule,
   ],
 })
 export class AppModule {}
