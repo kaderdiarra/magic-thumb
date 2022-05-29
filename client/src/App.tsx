@@ -1,27 +1,38 @@
 // import { SocketContext, socket } from "./context";
-import { Box } from "@mui/material";
-import { Main } from "./Main";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { LoginPage, RegisterPage, HomePage } from "./pages";
+
 import "./index.css";
+import { RequireAuth } from "./Auth";
+import { AuthProvider } from "./Auth";
 
 function App() {
   return (
-    // <SocketContext.Provider value={socket}>
-    <Box
-      sx={{
-        position: "absolute",
-        height: "100%",
-        width: "100%",
-      }}
-    >
-      <Box
-        sx={{
-          height: "100%",
-        }}
-      >
-        <Main />
-      </Box>
-    </Box>
-    // </SocketContext.Provider>
+    <AuthProvider>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <HomePage />
+              </RequireAuth>
+            }
+          />
+        </Route>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </AuthProvider>
+  );
+}
+
+function Layout() {
+  return (
+    <div>
+      <header>Header</header>
+      <Outlet />
+    </div>
   );
 }
 
